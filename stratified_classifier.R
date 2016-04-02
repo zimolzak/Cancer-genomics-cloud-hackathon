@@ -31,3 +31,10 @@ qplot(data=X, x=expression, y=cnv, color=variant_class)
 
 plot(model)
 
+
+Xb = data.frame(expression=bt$Expression, cnv=bt$CNV, isMissense=(bt$Variant.Classification=='Missense_Mutation'))
+qplot(data=Xb, x=expression, y=cnv, color=isMissense)
+model=earth(isMissense ~ ., data=Xb)
+plotmo(model)
+plot(evimp(model))
+plot(model)

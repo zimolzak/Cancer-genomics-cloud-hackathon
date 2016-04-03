@@ -14,9 +14,8 @@ for(ca in cancers)
 	{
 		filename = paste(ca, ge, basefile)
 		pathname = paste(basedir, filename, sep="")
-		if(ca=='prad' & ge=='kras')
+		if(!file.exists(pathname))
 		{
-			# do not attempt to open. I have prior knowledge this file doesn't exist. Less adhoc later.
 			next
 		}
 		df = read.csv(pathname)

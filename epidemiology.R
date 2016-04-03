@@ -31,7 +31,8 @@ for(g in genes)
 	#writeLines("\n")
 	P = fisher.test(T)$p.value
 	Significant = (P < alpha_prime)
-	report = rbind(report, data.frame(Gene=toupper(g), VA_mutations=paste(va_pos, va_total, sep='/'), TCGA_mutations=paste(tcga_pos, tcga_total, sep='/'), VA_Rate, TCGA_Rate=round(TCGA_Rate, 3), P, Significant))
+	report = rbind(report, data.frame(Gene=toupper(g), VA_mutations=paste(va_pos, va_total, sep='/'), TCGA_mutations=paste(tcga_pos, tcga_total, sep='/'), VA_Percent=(VA_Rate*100), TCGA_Percent=round(TCGA_Rate*100, 1), P=round(P, 5), Significant))
 }
 
-print(report[order(report$P), ])
+#print(report[order(report$P), ])
+write.csv(report[order(report$P), ], file="/Users/ajz/Desktop/CA Genomics Cloud/expression-cnv-variant/epi_compare_report.csv")

@@ -28,9 +28,14 @@ for(ca in cancers)
 		model=earth(isMissense ~ ., data=Xb)
 		if(make_many_plots)
 		{
-			qplot(data=Xb, x=expression, y=cnv, color=isMissense)
+			plot_prefix = paste(basedir, paste(ca, ge, '', sep="_"), sep='')
+			Q = qplot(data=Xb, x=expression, y=cnv, color=isMissense)
+			ggsave(Q, file=paste(plot_prefix, 'scatter.png'))
+			
 			plotmo(model)
+			
 			plot(evimp(model))
+			
 			plot(model)
 		}
 		grsq_vals = rbind(grsq_vals, data.frame(Disease=toupper(ca), Gene=toupper(ge), GRSq=model$grsq))

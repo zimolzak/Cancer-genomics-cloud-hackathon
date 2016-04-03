@@ -13,17 +13,22 @@ for(ca in cancers)
 	{
 		filename = paste(ca, ge, basefile)
 		pathname = paste(basedir, filename, sep="")
+		if((ca=='prad' & ge=='kras') | (ca=='brca' & ge=='kras') | (ca=='lusc' & ge=='kras')){
+			next
+		}
 		df = read.csv(pathname)
-		print(dim(df))
+
+		Xb = data.frame(expression=df$Expression, cnv=df$CNV, isMissense=(df$Variant.Classification=='Missense_Mutation'))
+		qplot(data=Xb, x=expression, y=cnv, color=isMissense)
+		model=earth(isMissense ~ ., data=Xb)
+		if( TRUE){
+			plotmo(model)
+			plot(evimp(model))
+			plot(model)
+		}
+		print(paste(ca, ge, model$grsq)) # 0.66
 	}
 }
 
 bt = read.csv("/Users/ajz/Desktop/CA Genomics Cloud/expression-cnv-variant/brca tp53 cgc_case_explorer_selected_data.csv")
 
-Xb = data.frame(expression=bt$Expression, cnv=bt$CNV, isMissense=(bt$Variant.Classification=='Missense_Mutation'))
-qplot(data=Xb, x=expression, y=cnv, color=isMissense)
-model=earth(isMissense ~ ., data=Xb)
-plotmo(model)
-plot(evimp(model))
-plot(model)
-model$grsq # 0.66

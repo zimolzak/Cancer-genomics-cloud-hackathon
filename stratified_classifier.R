@@ -6,7 +6,7 @@ cancers = c('brca','coad','luad','lusc','prad')
 genes = c('tp53', 'ttn', 'muc16', 'kras')
 basefile = 'cgc_case_explorer_selected_data.csv'
 grsq_vals = data.frame()
-make_many_plots = FALSE
+make_many_plots = TRUE
 
 for(ca in cancers)
 {
@@ -33,12 +33,17 @@ for(ca in cancers)
 			Q = qplot(data=Xb, x=expression, y=cnv, color=isMissense)
 			ggsave(Q, file=paste(plot_prefix, 'scatter.png'))
 			
-			#png(paste(plot))
+			png(paste(plot_prefix, 'plotmo.png'))
 			plotmo(model)
+			dev.off()
 			
+			png(paste(plot_prefix, 'evimp.png'))
 			plot(evimp(model))
+			dev.off()
 			
+			png(paste(plot_prefix, 'model.png'))
 			plot(model)
+			dev.off()
 		}
 		grsq_vals = rbind(grsq_vals, data.frame(Disease=toupper(ca), Gene=toupper(ge), GRSq=model$grsq))
 	}
@@ -46,3 +51,4 @@ for(ca in cancers)
 
 print(grsq_vals)
 ggplot(grsq_vals, aes(Disease, Gene)) + geom_raster(aes(fill = GRSq))
+#ggsave(p, )

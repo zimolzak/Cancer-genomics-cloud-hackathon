@@ -36,11 +36,7 @@ for(ca in cancers)
 			png(paste(plot_prefix, 'plotmo.png'))
 			plotmo(model)
 			dev.off()
-			
-			png(paste(plot_prefix, 'evimp.png'))
-			plot(evimp(model))
-			dev.off()
-			
+						
 			png(paste(plot_prefix, 'model.png'))
 			plot(model)
 			dev.off()

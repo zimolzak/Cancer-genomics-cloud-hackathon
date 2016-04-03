@@ -21,11 +21,9 @@ for(ca in cancers)
 		Xb = data.frame(expression=df$Expression, cnv=df$CNV, isMissense=(df$Variant.Classification=='Missense_Mutation'))
 		qplot(data=Xb, x=expression, y=cnv, color=isMissense)
 		model=earth(isMissense ~ ., data=Xb)
-		if( TRUE){
-			plotmo(model)
-			plot(evimp(model))
-			plot(model)
-		}
+		plotmo(model)
+		plot(evimp(model))
+		plot(model)
 		print(paste(ca, ge, model$grsq)) # 0.66
 	}
 }

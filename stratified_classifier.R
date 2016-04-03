@@ -22,6 +22,8 @@ for(ca in cancers)
 		df = read.csv(pathname)
 		if(dim(table(df$Variant.Classification)) < 3 ) # 3 because luad*kras has only 2 classes, no good for nfold
 		{
+			# FIXME - really we should look *inside* table(df$...)
+			# because 2 classes is ok, but 1 class w/ 1 member (unbalanced) is not ok.
 			print(paste("too few variant classes", ca, ge))
 			next
 		}

@@ -46,5 +46,5 @@ for(ca in cancers)
 }
 
 print(grsq_vals)
-ggplot(grsq_vals, aes(Disease, Gene)) + geom_raster(aes(fill = GRSq))
-#ggsave(p, )
+p = ggplot(grsq_vals, aes(Disease, Gene)) + geom_raster(aes(fill = GRSq))
+ggsave(p, file=paste(basedir, "all_rsq.png", sep=''))

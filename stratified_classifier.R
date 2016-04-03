@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# usage (incomplete): ./stratified_classifier.R concat.csv disease gene Variant.Classification
+# usage (incomplete): ./stratified_classifier.R concat.csv disease gene Variant.Classification Missense_Mutation Expression CNV
 library(earth)
 library(ggplot2)
 
@@ -24,26 +24,29 @@ code_text = paste("input_df$", stratify2, sep='')
 gene_column = eval(parse(text=code_text))
 genes = levels(gene_column)
 
-print(genes)
-print(cancers)
-q()
-
-
 for(ca in cancers)
 {
 	for(ge in genes)
 	{
-		df = input_df[cancer_column == ca & gene_column = ge,]
+		df = input_df[cancer_column == ca & gene_column == ge,]
 		code_text = paste("df$", binarize_me, sep='')
 		column_to_binarize = eval(parse(text=code_text))
-		if(dim(table(df$Variant.Classification)) < 3 ) # 3 because luad*kras has only 2 classes, no good for nfold
+		code_text = paste("df$", x1, sep='')
+		x1_column = eval(parse(text=code_text))
+		code_text = paste("df$", x2, sep='')
+		x2_column = eval(parse(text=code_text))
+		
+		# have to figure out how many classes in our subset, collapse levels
+		Xb = data.frame(expression=x1_column, cnv=x2_column, isMissense=(column_to_binarize == binarize_val))
+		classes = table(Xb$isMissense)
+		
+		if(dim(classes) < 2 | min(classes) < 10)
 		{
-			# FIXME - really we should look *inside* table(df$...)
-			# because 2 classes is ok, but 1 class w/ 1 member (unbalanced) is not ok.
+			# skip to next stratum if only 1 class or if very few TRUEs or FALSES.
+			# because we can't model and/or do 10 fold cross validation.
 			print(paste("too few variant classes", ca, ge))
 			next
 		}
-		Xb = data.frame(expression=df$Expression, cnv=df$CNV, isMissense=(df$Variant.Classification=='Missense_Mutation'))
 		print(paste("modeling", ca, ge))
 		model=earth(isMissense ~ ., data=Xb, nfold=10, degree=2)
 		if(make_many_plots)

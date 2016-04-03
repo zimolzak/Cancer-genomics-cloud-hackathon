@@ -14,23 +14,26 @@ for(ca in cancers)
 	{
 		filename = paste(ca, ge, basefile)
 		pathname = paste(basedir, filename, sep="")
-		if(ca=='prad' & ge=='kras'){
+		if(ca=='prad' & ge=='kras')
+		{
 			# do not attempt to open. I have prior knowledge this file doesn't exist. Less adhoc later.
 			next
 		}
 		df = read.csv(pathname)
-		if(dim(table(df$Variant.Classification)) == 1){
+		if(dim(table(df$Variant.Classification)) == 1)
+		{
 			# it has only one class so skip trying to model this stratum
 			next
 		}
 		Xb = data.frame(expression=df$Expression, cnv=df$CNV, isMissense=(df$Variant.Classification=='Missense_Mutation'))
 		model=earth(isMissense ~ ., data=Xb)
-		if(make_many_plots){
+		if(make_many_plots)
+		{
+			qplot(data=Xb, x=expression, y=cnv, color=isMissense)
 			plotmo(model)
 			plot(evimp(model))
 			plot(model)
-			qplot(data=Xb, x=expression, y=cnv, color=isMissense)
 		}
-		print(paste(ca, ge, model$grsq)) # 0.66
+		print(paste(ca, ge, model$grsq))
 	}
 }

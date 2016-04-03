@@ -25,7 +25,7 @@ for(ca in cancers)
 			next
 		}
 		Xb = data.frame(expression=df$Expression, cnv=df$CNV, isMissense=(df$Variant.Classification=='Missense_Mutation'))
-		model=earth(isMissense ~ ., data=Xb)
+		model=earth(isMissense ~ ., data=Xb, nfold=10, degree=2)
 		if(make_many_plots)
 		{
 			plot_prefix = paste(basedir, paste(ca, ge), sep='') # "like /a/b/c/prad kras"

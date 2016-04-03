@@ -40,7 +40,7 @@ for(ca in cancers)
 		Xb = data.frame(expression=x1_column, cnv=x2_column, isMissense=(column_to_binarize == binarize_val))
 		classes = table(Xb$isMissense)
 		
-		if(dim(classes) < 2 | min(classes) < 10)
+		if(dim(classes) < 2 | min(classes) < 10) ## FIXME - too conservative??
 		{
 			# skip to next stratum if only 1 class or if very few TRUEs or FALSES.
 			# because we can't model and/or do 10 fold cross validation.
@@ -70,4 +70,4 @@ for(ca in cancers)
 
 print(grsq_vals)
 p = ggplot(grsq_vals, aes(Disease, Gene)) + geom_raster(aes(fill = GRSq))
-ggsave(p, file=paste(basedir, "all_rsq.png", sep=''))
+ggsave(p, file=paste(basedir, "all_rsq.png", sep='')) ## FIXME

@@ -11,17 +11,27 @@ report = data.frame()
 
 for(g in genes)
 {
+	tcga_pos = as.numeric(epi$n_cases_mutated[epi$gene == g & epi$population == 'tcga'])
+	tcga_neg = as.numeric(epi$cases_negative[epi$gene == g & epi$population == 'tcga'])
+	va_pos = as.numeric(epi$n_cases_mutated[epi$gene == g & epi$population == 'va'])
+	va_neg = as.numeric(epi$cases_negative[epi$gene == g & epi$population == 'va'])
+	tcga_total = tcga_pos + tcga_neg
+	va_total = va_pos + va_neg
+
+	TCGA_Rate = tcga_pos / tcga_total
+	VA_Rate = va_pos / va_total
+
 	T = matrix(
-		c(
-			as.numeric(epi[epi$gene == g & epi$population == pops[1], c('n_cases_mutated', 'cases_negative')]),
-			as.numeric(epi[epi$gene == g & epi$population == pops[2], c('n_cases_mutated', 'cases_negative')])
-		),
+		c(tcga_pos, tcga_neg, va_pos, va_neg),
 		nrow=2,
 		dimnames=list(c('n_cases_mutated', 'cases_negative'), pops)
 	)
-	writeLines(c(g, '========'))
-	print(T)
-	writeLines(paste('P = ', fisher.test(T)$p.value))
-	writeLines(paste(g, 'is significant?', fisher.test(T)$p.value < alpha_prime))
-	writeLines('\n')
+	#writeLines(g)
+	#print(T)
+	#writeLines("\n")
+	P = fisher.test(T)$p.value
+	Significant = (P < alpha_prime)
+	report = rbind(report, data.frame(Gene=toupper(g), VA_mutations=paste(va_pos, va_total, sep='/'), TCGA_mutations=paste(tcga_pos, tcga_total, sep='/'), VA_Rate, TCGA_Rate=round(TCGA_Rate, 3), P, Significant))
 }
+
+print(report[order(report$P), ])

@@ -28,10 +28,12 @@ for(ca in cancers)
 		model=earth(isMissense ~ ., data=Xb)
 		if(make_many_plots)
 		{
-			plot_prefix = paste(basedir, paste(ca, ge, '', sep="_"), sep='')
+			plot_prefix = paste(basedir, paste(ca, ge), sep='') # "like /a/b/c/prad kras"
+			
 			Q = qplot(data=Xb, x=expression, y=cnv, color=isMissense)
 			ggsave(Q, file=paste(plot_prefix, 'scatter.png'))
 			
+			#png(paste(plot))
 			plotmo(model)
 			
 			plot(evimp(model))

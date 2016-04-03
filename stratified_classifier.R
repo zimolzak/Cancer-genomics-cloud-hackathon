@@ -33,9 +33,9 @@ for(ca in cancers)
 			plot(evimp(model))
 			plot(model)
 		}
-		grsq_vals = rbind(grsq_vals, data.frame(disease=ca, gene=ge, grsq=model$grsq))
+		grsq_vals = rbind(grsq_vals, data.frame(Disease=toupper(ca), Gene=toupper(ge), GRSq=model$grsq))
 	}
 }
 
 print(grsq_vals)
-ggplot(grsq_vals, aes(disease, gene)) + geom_raster(aes(fill = grsq))
+ggplot(grsq_vals, aes(Disease, Gene)) + geom_raster(aes(fill = GRSq))

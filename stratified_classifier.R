@@ -1,4 +1,5 @@
 #!/usr/bin/env Rscript
+# usage (incomplete): ./stratified_classifier.R concat.csv disease gene Variant.Classification
 library(earth)
 library(ggplot2)
 
@@ -16,25 +17,25 @@ make_many_plots = FALSE
 input_df = read.csv(csvfilename)
 
 code_text = paste("input_df$", stratify1, sep='')
-cancers = levels(eval(parse(text=code_text)))
+cancer_column = eval(parse(text=code_text))
+cancers = levels(cancer_column)
+
+code_text = paste("input_df$", stratify2, sep='')
+gene_column = eval(parse(text=code_text))
+genes = levels(gene_column)
+
+print(genes)
 print(cancers)
-
-
-
 q()
+
 
 for(ca in cancers)
 {
 	for(ge in genes)
 	{
-		filename = paste(ca, ge, basefile)
-		pathname = paste(basedir, filename, sep="")
-		if(!file.exists(pathname))
-		{
-			print(paste("No file for", ca, ge))
-			next
-		}
-		df = read.csv(pathname)
+		df = input_df[cancer_column == ca & gene_column = ge,]
+		code_text = paste("df$", binarize_me, sep='')
+		column_to_binarize = eval(parse(text=code_text))
 		if(dim(table(df$Variant.Classification)) < 3 ) # 3 because luad*kras has only 2 classes, no good for nfold
 		{
 			# FIXME - really we should look *inside* table(df$...)

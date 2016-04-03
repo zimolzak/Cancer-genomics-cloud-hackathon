@@ -16,15 +16,17 @@ for(ca in cancers)
 		pathname = paste(basedir, filename, sep="")
 		if(!file.exists(pathname))
 		{
+			print(paste("No file for", ca, ge))
 			next
 		}
 		df = read.csv(pathname)
-		if(dim(table(df$Variant.Classification)) == 1)
+		if(dim(table(df$Variant.Classification)) < 3 ) # 3 because luad*kras has only 2 classes, no good for nfold
 		{
-			# it has only one class so skip trying to model this stratum
+			print(paste("too few variant classes", ca, ge))
 			next
 		}
 		Xb = data.frame(expression=df$Expression, cnv=df$CNV, isMissense=(df$Variant.Classification=='Missense_Mutation'))
+		print(paste("modeling", ca, ge))
 		model=earth(isMissense ~ ., data=Xb, nfold=10, degree=2)
 		if(make_many_plots)
 		{

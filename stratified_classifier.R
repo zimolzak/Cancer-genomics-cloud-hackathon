@@ -1,12 +1,27 @@
+#!/usr/bin/env Rscript
 library(earth)
 library(ggplot2)
 
-basedir = "/Users/ajz/Desktop/CA Genomics Cloud/expression-cnv-variant/"
-cancers = c('brca','coad','luad','lusc','prad')
-genes = c('tp53', 'ttn', 'muc16', 'kras')
-basefile = 'cgc_case_explorer_selected_data.csv'
+args = commandArgs(trailingOnly = TRUE)
+csvfilename = args[1]
+stratify1 = args[2]
+stratify2 = args[3]
+binarize_me = args[4]
+binarize_val = args[5]
+x1 = args[6]
+x2 = args[7]
+
 grsq_vals = data.frame()
-make_many_plots = TRUE
+make_many_plots = FALSE
+input_df = read.csv(csvfilename)
+
+code_text = paste("input_df$", stratify1, sep='')
+cancers = levels(eval(parse(text=code_text)))
+print(cancers)
+
+
+
+q()
 
 for(ca in cancers)
 {

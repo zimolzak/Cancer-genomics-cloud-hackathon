@@ -15,7 +15,7 @@ What gene:cancer-type pairs have easily predicted mutation type?
 Comparing mutations in 2 populations
 --------
 
-Gene | VA mutations | TCGA mutations | VA Percent | TCGA Percent | P       | Significant
+Gene | VA mutations | TCGA mutations | VA Percent | TCGA Percent | P       | Significant at α=0.0056?
 -----|--------------|----------------|------------|--------------|---------|----------
 TP53 | 32/40       | 251/1005        | 80         | 25           |<0.00001 | TRUE
 CDKN2A | 8/40       | 37/997         | 20         | 3.7          | 0.00018 | TRUE

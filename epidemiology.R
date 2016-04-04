@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 epi = read.csv("~/Desktop/CA Genomics Cloud/expression-cnv-variant/epidemiology.csv")
 epi = cbind(epi, cases_negative=(epi$total_cases - epi$n_cases_mutated))
 

@@ -1,33 +1,53 @@
+#!/usr/bin/env Rscript
+# usage: ./stratified_classifier.R concat.csv disease gene Variant.Classification Missense_Mutation Expression CNV
 library(earth)
 library(ggplot2)
 
-basedir = "/Users/ajz/Desktop/CA Genomics Cloud/expression-cnv-variant/"
-cancers = c('brca','coad','luad','lusc','prad')
-genes = c('tp53', 'ttn', 'muc16', 'kras')
-basefile = 'cgc_case_explorer_selected_data.csv'
+args = commandArgs(trailingOnly = TRUE)
+csvfilename = args[1]
+stratify1 = args[2]
+stratify2 = args[3]
+binarize_me = args[4]
+binarize_val = args[5]
+x1 = args[6]
+x2 = args[7]
+
 grsq_vals = data.frame()
-make_many_plots = TRUE
+make_many_plots = FALSE
+input_df = read.csv(csvfilename)
+
+code_text = paste("input_df$", stratify1, sep='')
+cancer_column = eval(parse(text=code_text))
+cancers = levels(cancer_column)
+
+code_text = paste("input_df$", stratify2, sep='')
+gene_column = eval(parse(text=code_text))
+genes = levels(gene_column)
 
 for(ca in cancers)
 {
 	for(ge in genes)
 	{
-		filename = paste(ca, ge, basefile)
-		pathname = paste(basedir, filename, sep="")
-		if(!file.exists(pathname))
+		df = input_df[cancer_column == ca & gene_column == ge,]
+		code_text = paste("df$", binarize_me, sep='')
+		column_to_binarize = eval(parse(text=code_text))
+		code_text = paste("df$", x1, sep='')
+		x1_column = eval(parse(text=code_text))
+		code_text = paste("df$", x2, sep='')
+		x2_column = eval(parse(text=code_text))
+		
+		# have to figure out how many classes in our subset, collapse levels
+		Xb = data.frame(expression=x1_column, cnv=x2_column, isMissense=(column_to_binarize == binarize_val))
+		classes = table(Xb$isMissense)
+		
+		if(dim(classes) < 2 | min(classes) < 3)
 		{
-			print(paste("No file for", ca, ge))
-			next
-		}
-		df = read.csv(pathname)
-		if(dim(table(df$Variant.Classification)) < 3 ) # 3 because luad*kras has only 2 classes, no good for nfold
-		{
-			# FIXME - really we should look *inside* table(df$...)
-			# because 2 classes is ok, but 1 class w/ 1 member (unbalanced) is not ok.
+			# skip to next stratum if only 1 class or if very few TRUEs or FALSES.
+			# because we can't model and/or do 10 fold cross validation.
 			print(paste("too few variant classes", ca, ge))
+			print(classes)
 			next
 		}
-		Xb = data.frame(expression=df$Expression, cnv=df$CNV, isMissense=(df$Variant.Classification=='Missense_Mutation'))
 		print(paste("modeling", ca, ge))
 		model=earth(isMissense ~ ., data=Xb, nfold=10, degree=2)
 		if(make_many_plots)
@@ -51,4 +71,4 @@ for(ca in cancers)
 
 print(grsq_vals)
 p = ggplot(grsq_vals, aes(Disease, Gene)) + geom_raster(aes(fill = GRSq))
-ggsave(p, file=paste(basedir, "all_rsq.png", sep=''))
+ggsave(p, file="/Users/ajz/Desktop/CA Genomics Cloud/expression-cnv-variant/all_rsq.png")

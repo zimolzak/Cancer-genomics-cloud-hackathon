@@ -4,12 +4,20 @@ Cancer-genomics-cloud-hackathon
 Prediction of mutation type in TCGA. Compare TCGA NSCLC mutated genes
 to my data.
 
+Predicting mutation type
+--------
+
+What gene:cancer-type pairs have easily predicted mutation type?
+(Predicting based on gene expression and copy number variation.)
+
+![heatmap](https://dl.dropboxusercontent.com/u/38640281/github_img/all_rsq.png)
+
 Comparing mutations in 2 populations
--------
+--------
 
 Gene | VA mutations | TCGA mutations | VA Percent | TCGA Percent | P       | Significant
 -----|--------------|----------------|------------|--------------|---------|----------
-TP53 | 32/40       | 251/1005        | 80         | 25           | 0       | TRUE
+TP53 | 32/40       | 251/1005        | 80         | 25           |<0.00001 | TRUE
 CDKN2A | 8/40       | 37/997         | 20         | 3.7          | 0.00018 | TRUE
 KRAS | 9/40       | 70/979           | 22.5       | 7.2          | 0.00242 | TRUE
 FGFR1 | 3/40       | 5/910           | 7.5        | 0.5          | 0.00335 | TRUE

@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# usage (incomplete): ./stratified_classifier.R concat.csv disease gene Variant.Classification Missense_Mutation Expression CNV
+# usage: ./stratified_classifier.R concat.csv disease gene Variant.Classification Missense_Mutation Expression CNV
 library(earth)
 library(ggplot2)
 
@@ -40,11 +40,12 @@ for(ca in cancers)
 		Xb = data.frame(expression=x1_column, cnv=x2_column, isMissense=(column_to_binarize == binarize_val))
 		classes = table(Xb$isMissense)
 		
-		if(dim(classes) < 2 | min(classes) < 10) ## FIXME - too conservative??
+		if(dim(classes) < 2 | min(classes) < 3)
 		{
 			# skip to next stratum if only 1 class or if very few TRUEs or FALSES.
 			# because we can't model and/or do 10 fold cross validation.
 			print(paste("too few variant classes", ca, ge))
+			print(classes)
 			next
 		}
 		print(paste("modeling", ca, ge))
@@ -70,4 +71,4 @@ for(ca in cancers)
 
 print(grsq_vals)
 p = ggplot(grsq_vals, aes(Disease, Gene)) + geom_raster(aes(fill = GRSq))
-ggsave(p, file=paste(basedir, "all_rsq.png", sep='')) ## FIXME
+ggsave(p, file="/Users/ajz/Desktop/CA Genomics Cloud/expression-cnv-variant/all_rsq.png")
